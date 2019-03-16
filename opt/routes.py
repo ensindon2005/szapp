@@ -288,7 +288,7 @@ def instrument():
         db.session.add(new_inst)
         db.session.commit()
         flash(f'The instrument {form.inst_name.data} has been created', 'success')
-        return redirect(url_for('instrument'))
+        return redirect(url_for('index'))
     return render_template('instruments.html', title='Add Instrument', form=form)
 
 

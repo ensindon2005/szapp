@@ -65,7 +65,7 @@ class Instrument(db.Model):
     instname= db.relationship('Stock', backref='inst_fin', lazy=True)
     
     def __repr__(self):
-        return f"Instrument('{self.name_inst}')"
+        return f"Instrument('{self.name_inst}', '{self.descr_inst}')"
 
 
 
