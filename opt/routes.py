@@ -2,6 +2,9 @@ from flask import render_template, url_for, flash, redirect, request, abort,Blue
 from opt import app, db, bcrypt, mail
 from functools import wraps
 import secrets
+import pandas as pd
+from pyexcel_xls import get_data # for excel data
+from os.path import join, dirname, realpath # to get real path
 from datetime import datetime
 #from Pillow import Image
 from opt.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
@@ -14,7 +17,7 @@ from flask_mail import Message
 
 
 
-
+UPLOADS_PATH = join(dirname(realpath(__file__)), './static/uploads/')
 UPLOAD_FOLDER='./opt/static/uploads/'
 ALLOWED_EXTENSIONS = set(['txt','jpg','pdf','xls','xlsx','ppt','csv'])
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
@@ -326,3 +329,11 @@ def account():
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)
 '''
+
+
+
+@app.route('/html_table', methods=("POST", "GET"))
+def html_table():
+    df=pd.read_excel(UPLOADS_PATH+'futures.xlsx')
+    return render_template('view.html', title='excel', tables=[df.to_html(classes='data')], titles=df.columns.values)
+
