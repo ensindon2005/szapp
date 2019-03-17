@@ -15,10 +15,13 @@
                     {{ form.futf_sym.label(class="form-control-label") }}
                     {{ form.futf_sym(class="form-control form-control-sm") }}                  
                 </div>
-                <div class="form-group">
-                    {{ form.inst.label(class="form-control-label") }}
-                    {{ form.inst(class="form-control form-control-sm") }}                   
-                </div> 
+                    <div class="form-group">
+                <select name='inst_id'>
+                {% for instrument in instruments%}
+                    <option value={{instrument.id}}>
+                        {{instrument.name_inst}}                   
+                {% endfor %}
+                </select>
 
             </fieldset>
             <div class="form-group">
