@@ -2,8 +2,9 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from opt.models import User, Instrument, Options,MonthC
+from opt.models import *
 from flask_login import current_user
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
 class RegistrationForm(FlaskForm):
@@ -111,7 +112,25 @@ class NewInstrument(FlaskForm):
  
     submit = SubmitField('Save')
 
-    def validate_instrument(self, inst_name):
+#important after validate, the name of the value to validate should be there. Here inst_name()#
+    def validate_inst_name(self, inst_name):
         instrument = Instrument.query.filter_by(name_inst=inst_name.data).first()
         if instrument:
             raise ValidationError('That instrument exist already')
+
+class NewFuture(FlaskForm):
+    futf_name = StringField('Future Name',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    futf_sym = StringField('Symbol',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+  
+    #inst = QuerySelectField(query_factory=lambda: Instrument.query.all())
+    inst = QuerySelectField('Instrument', query_factory=lambda: Instrument.query.all())
+
+    submit = SubmitField('Save')
+
+#important after validate, the name of the value to validate should be there. Here inst_name()#
+    def validate_futf_name(self, futf_name):
+        future = Futures.query.filter_by(fut_name=futf_name.data).first()
+        if future:
+            raise ValidationError('That future exist already')

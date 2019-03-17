@@ -1,6 +1,8 @@
 from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory
 from opt import app, db, bcrypt, mail
+from opt.models import *
 from functools import wraps
+from sqlalchemy import desc, asc
 import secrets
 import pandas as pd
 from pyexcel_xls import get_data # for excel data
@@ -8,8 +10,8 @@ from os.path import join, dirname, realpath # to get real path
 from datetime import datetime
 #from Pillow import Image
 from opt.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestResetForm, ResetPasswordForm, OptionForm, NewInstrument)
-from opt.models import User, Post,Instrument,Options
+                             PostForm, RequestResetForm, ResetPasswordForm, OptionForm,
+                             NewFuture, NewInstrument)
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug import secure_filename
 import os
@@ -285,20 +287,23 @@ def special_requirement(f):
 @app.route('/instrument', methods=['GET', 'POST'])
 @special_requirement
 def instrument():
-    form=NewInstrument()
+    form = NewInstrument()
     if form.validate_on_submit():
         new_inst= Instrument(name_inst=form.inst_name.data, descr_inst=form.inst_des.data)
         db.session.add(new_inst)
         db.session.commit()
         flash(f'The instrument {form.inst_name.data} has been created', 'success')
-        return redirect(url_for('index'))
+        return redirect('index')
     return render_template('instruments.html', title='Add Instrument', form=form)
 
 
-@app.route('/options_calc')
+@app.route('/options_calc', methods=['GET', 'POST'])
 def options_calc():
+    ## list of all instrument
     form = OptionForm()
-    return render_template('options.html', title='Options Calculator', form=form)
+    futures=Futures.query.all()
+    futctr=Futures.fut_list
+    return render_template('options.html', title='Options Calculator', futures=futures,futctr=futctr, form=form)
 
 
 #admins portal
@@ -306,7 +311,11 @@ def options_calc():
 @login_required
 def admin_dash():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('layoutdash.html', title='Admin Dashboard', image_file=image_file)
+    instruments = Instrument.query.all()
+    users=User.query.all()
+   
+    return render_template('layoutdash.html', title='Admin Dashboard', 
+                    users=users, instruments=instruments, image_file=image_file)
 
 '''
 @login_required
@@ -337,3 +346,16 @@ def html_table():
     df=pd.read_excel(UPLOADS_PATH+'futures.xlsx')
     return render_template('view.html', title='excel', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
+@app.route('/future', methods=['GET', 'POST'])
+#@special_requirement
+def future():
+    form = NewFuture()
+    if form.validate_on_submit():
+        
+        new_fut= Futures(fut_name=form.futf_name.data, fut_sym=form.futf_sym.data, inst_id=form.inst.data)
+        #missing instrument id
+        db.session.add(new_fut)
+        db.session.commit()
+        flash(f'The future {form.futf_name.data} has been created', 'success')
+        return redirect('index')
+    return render_template('future.html', title='Add future', form=form)
