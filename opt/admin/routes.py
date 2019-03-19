@@ -1,12 +1,12 @@
 from functools import wraps
 from flask_login import login_user, current_user, logout_user, login_required
-from opt.admin.forms import NewFuture,NewInstrument,OptionForm
-from opt.models import Futures,Options,Instrument
+from opt.admin.forms import NewFuture,NewInstrument,OptionForm,CalcForm, AddMonth
+from opt.models import Futures,Options,Instrument,User,MonthC
 from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory
 import pandas as pd
 from os.path import join, dirname, realpath # to get real path
 from opt import db
-from opt.models import User
+
 
 
 admin=Blueprint('admin',__name__)
@@ -74,13 +74,51 @@ def html_table():
 #@special_requirement
 def future():
     form = NewFuture()
-    instruments=Instrument.query.all()
     if form.validate_on_submit():
-        inst_id=int(request.form.get(inst_id))
-        new_fut= Futures(fut_name=form.futf_name.data, fut_sym=form.futf_sym.data, inst_id=inst_id)
-        #missing instrument id
+        new_fut= Futures(fut_name=form.futf_name.data, fut_sym=form.futf_sym.data, inst_id=form.inst_id.data.id)
         db.session.add(new_fut)
         db.session.commit()
         flash(f'The future {form.futf_name.data} has been created', 'success')
-        return redirect('index')
-    return render_template('future.html', title='Add future', form=form, instruments=instruments)
+        
+        return redirect('future')
+    return render_template('future.html',title='Add future', form=form)
+
+@admin.route('/calculator', methods=['GET','POST'])
+def calculator():
+    form=CalcForm()
+    #check why i can not see this part on the form
+    #instrument=Instrument.query.all()
+    if form.validate_on_submit():
+        #get Form information
+        date_calc=request.form.get('entrydate')
+        under_name=request.form.get('under_n')
+        under_price=request.form.get('under_p')
+        date_calc=request.form.get('date_calc')
+        quantity=request.form.get('quantity')
+        vol=request.form.get('vol')
+        return 'GUT gemacht ' + form.under_n.data.fut_sym
+    return render_template('calculator.html', title='Calculator', form=form)
+
+@admin.route('/add_month', methods=['GET', 'POST'])
+def add_month():
+    form=AddMonth()
+    if form.validate_on_submit():
+        new_month= MonthC(month_name=form.month_name.data, month_letter=form.month_letter.data)
+        db.session.add(new_month)
+        db.session.commit()
+        flash(f'The Month {form.month_name.data} has been added', 'success')
+        
+        return redirect('add_month')
+    return render_template('month.html',title='Add Month', form=form)
+
+'''        
+@admin.route("/deletem", methods=['GET','POST'])
+
+def deletem():
+    month = MonthC.query.get_or_404(2)
+
+    db.session.delete(month)
+    db.session.commit()
+    
+    return 'the month has been deleted'
+'''

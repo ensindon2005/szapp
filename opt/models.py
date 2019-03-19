@@ -65,7 +65,7 @@ class Instrument(db.Model):
     instname= db.relationship('Stock', backref='inst_fin', lazy=True)
     
     def __repr__(self):
-        return f"Instrument('{self.name_inst}', '{self.descr_inst}')"
+        return f"Instrument('{self.name_inst}')"
 
 
 
@@ -146,16 +146,19 @@ class MonthC(db.Model):
     def __repr__(self):
         return f"MonthC('{self.month_name}','{self.month_letter}')"
    
+
+   #It needs to be checked
 class Options(db.Model):
     __tablename__ = 'options'
     id = db.Column(db.Integer, primary_key=True)
+    under_n=db.Column(db.String(8), nullable=False)
     #date of calculation
     theo_price=db.Column(db.Float(8), nullable=False)
     date_calc=db.Column(db.DateTime, default=datetime.utcnow) 
     #strike price
     opt_strike=db.Column(db.Float(8), nullable=False)
     #symbol of option
-    opt_sym=db.Column(db.String(8), default=datetime.utcnow)
+    opt_sym=db.Column(db.String(8), nullable=False)
     # expiry date of option
     exp_date=db.Column(db.DateTime, default=datetime.utcnow) 
     #date of estimated value. for instance in 10 days
