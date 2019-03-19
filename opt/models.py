@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask_login import UserMixin
-from opt import db, login_manager, app
+from opt import db, login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
+from flask import current_app
 
 
 @login_manager.user_loader
@@ -27,7 +27,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def verify_reset_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except:
@@ -128,34 +128,37 @@ class FutContract(db.Model):
     fut_list=db.relationship('Options', backref='fut_ctr', lazy=True)
     #foreign keys
     fut_id=db.Column(db.Integer,db.ForeignKey('futures.id'),nullable=False)  
-   # month_f=db.Column(db.Integer,db.ForeignKey('monthc.id'),nullable=False)
+    ctrf_month=db.Column(db.Integer,db.ForeignKey('month_c.id'),nullable=False)  
     
     def __repr__(self):
         return f"FutContract('{self.futctr_sym}', '{self.fut_price}','{self.fut_sett}' ,'{self.fut_exp}')"    
       
   
 class MonthC(db.Model):
-    __tablename__= 'month'
+    __tablename__= 'month_c'
     id = db.Column(db.Integer, primary_key=True)
     month_name=db.Column(db.String(20), nullable=False)
     month_letter=db.Column(db.String(8), nullable=False)
     
    #relationship
-   # month_ctr=db.Column('FutContract',backref='month_fut',lazy=True)
-   
+    month_opt=db.relationship('Options', backref='ctr_month')
+    month_fut=db.relationship('FutContract', backref='ctrfut_month')
     def __repr__(self):
         return f"MonthC('{self.month_name}','{self.month_letter}')"
    
+
+   #It needs to be checked
 class Options(db.Model):
     __tablename__ = 'options'
     id = db.Column(db.Integer, primary_key=True)
+    under_n=db.Column(db.String(8), nullable=False)
     #date of calculation
     theo_price=db.Column(db.Float(8), nullable=False)
     date_calc=db.Column(db.DateTime, default=datetime.utcnow) 
     #strike price
     opt_strike=db.Column(db.Float(8), nullable=False)
     #symbol of option
-    opt_sym=db.Column(db.String(8), default=datetime.utcnow)
+    opt_sym=db.Column(db.String(8), nullable=False)
     # expiry date of option
     exp_date=db.Column(db.DateTime, default=datetime.utcnow) 
     #date of estimated value. for instance in 10 days
@@ -163,18 +166,19 @@ class Options(db.Model):
     vol_opt=db.Column(db.Float(6),nullable=False, default=0.30) 
       
     #relationship
-   # greeks=db.relationship('GreeksOpt',backref='option', lazy=True)
+    greeks=db.relationship('GreeksOpt',backref='option', lazy=True)
       
     #Foreign Keys
     futctr_id = db.Column(db.Integer, db.ForeignKey('futcontract.id'), nullable=False)
-
+    contract= db.Column(db.Integer, db.ForeignKey('month_c.id'), nullable=False)
     def __repr__(self):
         return f"Options('{self.opt_sym}','{self.opt_strike}', '{self.exp_date}','{self.theo_price}')"
 
 
-'''
+
 class GreeksOpt(db.Model):
     __tablename__='greeksopt'
+    id = db.Column(db.Integer, primary_key=True)
     delta_put=db.Column(db.Float(10),nullable=False)
     delta_call=db.Column(db.Float(10),nullable=False)
    
@@ -196,5 +200,4 @@ class GreeksOpt(db.Model):
    
     def __repr__(self):
         return f"GreeksOpt('{self.delta_put}','{self.gamma_put}', '{self.theta_put}','{self.vega_put}', '{self.rho_put}')"
-        #return f"Greeks('{self.delta_call}','{self.gamma_call}', '{self.theta_call}','{self.vega_call}', {'self.rho_call'})"
-'''
+        return f"Greeks('{self.delta_call}','{self.gamma_call}', '{self.theta_call}','{self.vega_call}', {'self.rho_call'})"

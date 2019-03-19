@@ -29,25 +29,31 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('index') }}">Home</a>
-              <a class="nav-item nav-link" href="{{ url_for('options_calc') }}">Options Values</a>
+              <a class="nav-item nav-link" href="{{ url_for('main.index') }}">Home</a>
+              <a class="nav-item nav-link" href="{{ url_for('admin.options_calc') }}">Options</a>
+              <a class="nav-item nav-link" href="{{ url_for('admin.future') }}">Future</a>
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('upload') }}">Upload</a>
-              <a class="nav-item nav-link" href="{{ url_for('new_post') }}">New Post</a>
+              <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">New Post</a>
+              <a class="nav-item nav-link" href="{{ url_for('admin.admin_dash') }}">Admin</a>
               {% endif %}
                 {% if current_user.username=='Edinson' %}
-              <a class="nav-item nav-link" href="{{ url_for('instrument') }}">Instrument</a>
+                <a class="nav-item nav-link" href="{{ url_for('archives.upload') }}">Upload</a>
+                 <a class="nav-item nav-link" href="{{ url_for('admin.instrument') }}">Instrument</a>
+               
+              
             
          {% endif %}
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
-                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.account') }}">{{ current_user.username.capitalize()}}'s Profile</a>
+                 <!-- Navbar Right Side <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>-->
+                <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+                
               {% else %}
-                <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-                <a class="nav-item nav-link" href="{{ url_for('register') }}">Register</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
               {% endif %}
             </div>
           </div>
