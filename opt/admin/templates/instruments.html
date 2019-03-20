@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method='post'action=''>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Add New Instrument</legend>
+                <div class="form-group">
+                    {{ form.inst_name.label(class="form-control-label") }}
+                    {% if form.inst_name.errors %}
+                        {{ form.inst_name(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.inst_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.inst_name(class="form-control form-control-lg") }}
+                    {% endif %}
+                                          
+                </div>                
+                  <div class="form-group">
+                    {{ form.inst_des.label(class="form-control-label") }}
+                    {% if form.inst_des.errors %}
+                        {{ form.inst_des(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.inst_des.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.inst_des(class="form-control form-control-lg") }}
+                    {% endif %}
+                                             
+                </div>
+
+
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+ 
+{% endblock content %}

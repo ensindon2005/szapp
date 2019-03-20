@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_login import login_user, current_user, logout_user, login_required
-from opt.admin.forms import NewFuture,NewInstrument,OptionForm,CalcForm, AddMonth
+from opt.admin.forms import NewFuture,NewInstrument,OptionForm,CalcForm, AddMonth,OptionEst
 from opt.models import Futures,Options,Instrument,User,MonthC
 from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory
 import pandas as pd
@@ -9,7 +9,7 @@ from opt import db
 
 
 
-admin=Blueprint('admin',__name__)
+admin=Blueprint('admin',__name__,template_folder='templates')
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), './static/uploads/')
 
@@ -37,17 +37,16 @@ def instrument():
         db.session.add(new_inst)
         db.session.commit()
         flash(f'The instrument {form.inst_name.data} has been created', 'success')
-        return redirect('index')
+        return redirect('main.index')
     return render_template('instruments.html', title='Add Instrument', form=form)
 
 
-@admin.route('/options_calc', methods=['GET', 'POST'])
-def options_calc():
-    ## list of all instrument
-    form = OptionForm()
-    futures=Futures.query.all()
-    futctr=Futures.fut_list
-    return render_template('options.html', title='Options Calculator', futures=futures,futctr=futctr, form=form)
+@admin.route('/opt_calc', methods=['GET', 'POST'])
+def opt_calc():
+    form=OptionEst()
+    if form.validate_on_submit():
+        return 'it is working'
+    return render_template('options.html', title='Options Calculator', form=form)
 
 
 #admins portal

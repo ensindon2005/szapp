@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Length, ValidationError,InputRequir
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from opt.models import Instrument,Futures
 from opt.admin.utils import *
-
+from datetime import datetime
 
 
 #OPTIONS DATAFORM
@@ -67,18 +67,18 @@ class NewFuture(FlaskForm):
 
 class CalcForm(FlaskForm):
     entrydate= DateField('Date', validators=[DataRequired()],
-                        format='%Y.%m.%d')
+                        format='%Y.%m.%d',default=datetime.today)
     under_n=QuerySelectField('Underlying',
                            validators=[DataRequired()], query_factory=get_futures,
                            allow_blank=True,get_label='fut_name')
     under_p=FloatField('Underlying Price',
-                           validators=[InputRequired()])
+                           validators=[InputRequired()],default=0.0)
     date_calc=DateField('Date Pricing', validators=[DataRequired()],
-                        format='%Y.%m.%d')
+                        format='%Y.%m.%d',default=datetime.today)
     quantity=IntegerField('Quantity',
-                           validators=[DataRequired()])
+                           validators=[DataRequired()],default=0)
     vol=FloatField('Volatility (%)',
-                           validators=[InputRequired()])
+                           validators=[InputRequired()],default=0.30)
 
 
  
@@ -104,3 +104,27 @@ class AddMonth(FlaskForm):
             raise ValidationError(f'This letter has been already added')
 
 
+class OptionEst(FlaskForm):
+    entrydate=DateField('Date Calculation', validators=[DataRequired()],
+                        format='%Y.%m.%d', default=datetime.today)
+    under_name = QuerySelectField('Underlying',
+                           validators=[DataRequired()], query_factory=get_futures,
+                           allow_blank=True, get_label='fut_name')
+    ul_price = FloatField('Underyling Price',
+                        validators=[InputRequired()],default=0.00)                   
+    opt_strike = FloatField('Option Strike',
+                        validators=[InputRequired()],default=0.00)
+    exp_date = DateField('Expiry Date', validators=[DataRequired()],
+                        format='%Y.%m.%d',default=datetime.today)
+    date_val=DateField('Date Pricing', validators=[DataRequired()],
+                        format='%Y.%m.%d',default=datetime.today)
+    quantity=IntegerField('Quantity',
+                           validators=[DataRequired()],default=0)
+    vol=FloatField('Volatility (%)',
+                           validators=[InputRequired()],default=25.0)
+
+
+
+    submit = SubmitField('Calculate')
+
+   
