@@ -6,7 +6,9 @@ from flask import render_template, url_for, flash, redirect, request, abort,Blue
 import pandas as pd
 from os.path import join, dirname, realpath # to get real path
 from opt import db
-
+from opt.admin.opt_val import BSM_call_value,BSM_put_value
+from datetime import datetime
+from opt.admin.greeks import *
 
 
 admin=Blueprint('admin',__name__,template_folder='templates')
@@ -45,7 +47,34 @@ def instrument():
 def opt_calc():
     form=OptionEst()
     if form.validate_on_submit():
-        return 'it is working'
+        K=float(request.form.get('opt_strike'))
+        S0=float(request.form.get('ul_price'))
+        t=datetime.strptime(request.form.get('date_val'),'%Y.%m.%d')
+        m=datetime.strptime(request.form.get('exp_date'),'%Y.%m.%d')
+        T=float((m-t).days/365)
+        x=float((m-t).days/365)
+        r=float(request.form.get('rate'))/100
+        sigma=float(request.form.get('vol'))/100
+
+        theo_call = BSM_call_value(S0, K, T, r, sigma)
+        deltac = BSM_delta(S0, K, T, r, sigma)
+        gamma=BSM_gamma(S0, K, T, r, sigma)
+        thetac=BSM_theta(S0, K, T, r, sigma)
+        rhoc=BSM_rho(S0, K, T, r, sigma)
+        vega=BSM_vega(S0, K, T, r, sigma)
+
+        theo_put = BSM_put_value(S0, K, T, r, sigma)
+        deltap=BSM_delta_put(S0, K, T, r, sigma)
+        #BSM_gamma(S0, K, T, r, sigma) #same for call and puts
+        thetap=BSM_theta_put(S0, K, T, r, sigma)
+        rhop=BSM_rho_put(S0, K, T, r, sigma)
+
+        call_values=[theo_call,deltac,gamma,thetac,rhoc,vega]
+        put_values=[theo_put,deltap,gamma,thetap,rhop,vega]
+        #BSM_vega(S0, K, T, r, sigma #same for call and puts
+    
+        return render_template('options.html', call_values=call_values,put_values=put_values,form=form)
+        
     return render_template('options.html', title='Options Calculator', form=form)
 
 

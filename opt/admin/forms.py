@@ -120,6 +120,9 @@ class OptionEst(FlaskForm):
                         format='%Y.%m.%d',default=datetime.today)
     quantity=IntegerField('Quantity',
                            validators=[DataRequired()],default=0)
+    rate = FloatField('Risk-Free-Rate',
+                        validators=[InputRequired()],default=0.00)
+                           
     vol=FloatField('Volatility (%)',
                            validators=[InputRequired()],default=25.0)
 
@@ -127,4 +130,3 @@ class OptionEst(FlaskForm):
 
     submit = SubmitField('Calculate')
 
-   
