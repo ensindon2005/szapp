@@ -1,58 +1,138 @@
 {% extends "layout.html" %}
+ {% block message %} 
+ {% endblock %}
 {% block content %}
-    <div class="content-section">
+<style>
+table, td, th {  
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 15px;
+}
+</style>
+    <section class="content-section">
         <form method="POST" action='' >
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Calculate Options Values</legend>
+                <legend class="border-bottom mb-4">Calculate Options values</legend>
 
                 <div class="form-group">
                  {{ form.entrydate.label(class="form-control-label") }}
                  {{ form.entrydate(class="form-control form-control-sm") }}
                  
-                 </div>
-                   <div class="form-group">
+                    </div>
+                <div class="form-group">
                  {{ form.under_name.label(class="form-control-label") }}
                  {{ form.under_name(class="form-control form-control-sm") }}
                  
-                 </div>
+                    </div>
                  <div class="form-group">
                     {{ form.ul_price.label(class="form-control-label") }}
-                    {{ form.ul_price(class="form-control form-control-sm") }}
+                    
+                    {% if form.ul_price.errors %}
+                        {{ form.ul_price(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.ul_price.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.ul_price(class="form-control form-control-lg") }}
+                    {% endif %}
+                   
                  
-                </div>
+                 </div>
                 
                 <div class="form-group">
                     {{ form.opt_strike.label(class="form-control-label") }}
-                    {{ form.opt_strike(class="form-control form-control-sm") }}
+                           {{ form.opt_strike.label(class="form-control-label") }}
+                    
+                    {% if form.opt_strike.errors %}
+                        {{ form.opt_strike(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.opt_strike.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.opt_strike(class="form-control form-control-lg") }}
+                    {% endif %}
                  
-               </div>
+                    </div>
               <div class="form-group">
                     {{ form.exp_date.label(class="form-control-label") }}
                     {{ form.exp_date(class="form-control form-control-sm") }}
                  
-                </div>
+                    </div>
                <div class="form-group">
                     {{ form.date_val.label(class="form-control-label") }}
                     {{ form.date_val(class="form-control form-control-sm") }}
                  
-                </div>
-                 <div class="form-group">
+                    </div>
+                <div class="form-group">
                     {{ form.quantity.label(class="form-control-label") }}
                     {{ form.quantity(class="form-control form-control-sm") }}
                  
-                </div>
+                     </div>
 
-                 <div class="form-group">
+                <div class="form-group">
                     {{ form.vol.label(class="form-control-label") }}
                     {{ form.vol(class="form-control form-control-sm") }}
                  
-                </div>
+                     </div>
+                <div class="form-group">
+                    {{ form.rate.label(class="form-control-label") }}
+                    {{ form.rate(class="form-control form-control-sm") }}
+                 
+                    </div>
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>
-        </form>
-    </div>
+            </form>
+
+            <section class="result">
+           
+            
+             {% if call_values != None and put_values != None %}
+                <table>
+                <tr>
+                <th>Option</th>
+                <th>Theo.Price </th>
+                <th> Delta </th>
+                <th>Gamma</th>
+                <th> Theta</th>
+                <th>Rho</th>
+                <th>Vega</th>
+                </tr>
+                 <tr><td>Call</td>
+                {% for value in call_values%}
+                
+                 <td>{{ "%.6f"|format(value)}}</td>
+                 
+                    {% endfor %}
+                    </tr>
+                <tr>
+                <td>Put</td>
+                  {% for value in put_values%}
+                 
+                 <td>{{ "%.6f"|format(value)}}</td>
+                 
+                    {% endfor %}
+                </table>
+
+            
+
+             {% endif %}
+              
+      
+            </section>    
  
 {% endblock content %}

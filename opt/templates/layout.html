@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+{% block scripts %}
+    <script>
+        // ...
+        function set_message_count(n) {
+            $('#message_count').text(n);
+            $('#message_count').css('visibility', n ? 'visible' : 'hidden');
+        }
+        {% if current_user.is_authenticated %}
+        $(function() {
+            var since = 0;
+            setInterval(function() {
+                $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+                    function(notifications) {
+                        for (var i = 0; i < notifications.length; i++) {
+                            if (notifications[i].name == 'unread_message_count')
+                                set_message_count(notifications[i].data);
+                            since = notifications[i].timestamp;
+                        }
+                    }
+                );
+            }, 10000);
+        });
+        {% endif %}
+    </script>
+{% endblock %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -29,29 +54,39 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('main.index') }}">Home</a>
+              <a class="nav-item nav-link" href="{{ url_for('main.index') }}">My Posts</a>
               <a class="nav-item nav-link" href="{{ url_for('admin.opt_calc') }}">Options</a>
               <a class="nav-item nav-link" href="{{ url_for('admin.future') }}">Future</a>
-              {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">New Post</a>
-              <a class="nav-item nav-link" href="{{ url_for('admin.admin_dash') }}">Admin</a>
-              {% endif %}
-                {% if current_user.username=='Edinson' %}
-                <a class="nav-item nav-link" href="{{ url_for('archives.upload') }}">Upload</a>
-                 <a class="nav-item nav-link" href="{{ url_for('admin.instrument') }}">Instrument</a>
-               
-              
             
-         {% endif %}
+              {% if current_user.is_authenticated %}
+              <a class="nav-item nav-link"href="{{ url_for('main.explore') }}">Explore</a>
+              <a class="nav-item nav-link" href="{{ url_for('posts.new_post') }}">New Post</a>
+
+              
+              
+              {% endif %}
+          
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
+              <li>
+                        <a href="{{ url_for('main.messages') }}">
+                            {{ ('Messages') }}
+                            {% set new_messages = current_user.new_messages() %}
+                            <span id="message_count" class="badge"
+                                  style="visibility: {% if new_messages %}visible
+                                                     {% else %}hidden {% endif %};">
+                                {{ new_messages }}
+                            </span>
+                        </a>
+                    </li>
                 <a class="nav-item nav-link" href="{{ url_for('users.account') }}">{{ current_user.username.capitalize()}}'s Profile</a>
                  <!-- Navbar Right Side <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>-->
                 <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
                 
-              {% else %}
+              {% else %}   
+                 
                 <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
                 <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
               {% endif %}
@@ -60,7 +95,9 @@
         </div>
       </nav>
     </header>
-   <main role="main" class="container">
+  
+          
+          <main role="main" class="container">
       <div class="row">
         <div class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=true) %}
@@ -72,7 +109,10 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-          {% block content %}{% endblock %}
+            
+         {% block content %}  
+         
+         {% endblock %}
         </div>
 
 

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, SubmitField,TextAreaField,
                     DateField,FloatField,IntegerField)
-from wtforms.validators import DataRequired, Length, ValidationError,InputRequired
+from wtforms.validators import DataRequired, Length, ValidationError,InputRequired,NumberRange
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from opt.models import Instrument,Futures
 from opt.admin.utils import *
@@ -111,20 +111,30 @@ class OptionEst(FlaskForm):
                            validators=[DataRequired()], query_factory=get_futures,
                            allow_blank=True, get_label='fut_name')
     ul_price = FloatField('Underyling Price',
-                        validators=[InputRequired()],default=0.00)                   
+                        validators=[InputRequired(),NumberRange(min=1)],default=0.00)                   
     opt_strike = FloatField('Option Strike',
-                        validators=[InputRequired()],default=0.00)
+                        validators=[InputRequired(),NumberRange(min=1)],default=0.00)
     exp_date = DateField('Expiry Date', validators=[DataRequired()],
                         format='%Y.%m.%d',default=datetime.today)
     date_val=DateField('Date Pricing', validators=[DataRequired()],
                         format='%Y.%m.%d',default=datetime.today)
     quantity=IntegerField('Quantity',
-                           validators=[DataRequired()],default=0)
+                           validators=[DataRequired()],default=1)
+    rate = FloatField('Risk-Free-Rate',
+                        validators=[InputRequired()],default=2.00)
+                           
     vol=FloatField('Volatility (%)',
                            validators=[InputRequired()],default=25.0)
 
-
+    
+    
+    def validate_exp_date_entrydate_date_val(self,exp_date,entrydate,date_val):
+        if self.exp_date == self.date_val or exp_date == entry_date:
+            raise ValidationError(f'The values of your option is the intrinsic value')
+    
+    def validate_opt_strike(self, opt_strike):
+        if opt_strike == 0:
+            raise ValidationError(f'You need a price')
 
     submit = SubmitField('Calculate')
 
-   
