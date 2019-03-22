@@ -17,10 +17,7 @@
                 <p>Last seen on: {{ user.last_seen.strftime('%d.%m.%Y at %H:%M')}}</p>
     {% endif %}
     <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following</p>
-    </td>
-    </tr>
-    </table>
-      {% if user == current_user %}
+         {% if user == current_user %}
         <p><a href="{{ url_for('users.account') }}">Edit your profile</a></p>
 
          {% elif not user.is_following(user) %}
@@ -37,6 +34,10 @@
                     </a>
                 </p>
                 {% endif %}
+    </td>
+    </tr>
+    </table>
+      
 <hr>
     {% for post in posts.items %}
         {% include '_post.html' %}
