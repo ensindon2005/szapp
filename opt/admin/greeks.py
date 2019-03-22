@@ -233,6 +233,6 @@ def BSM_rho_put(S0, K, T, r, sigma):
 #    '''
     d1 = d1f(S0, K, T, r, sigma)
     d2 = d1 - sigma * math.sqrt(T)
-    rho = (K * (T) * math.exp(-r * (T)) * N(d2))/100
+    rho = (K * (-T) * math.exp(-r * (T)) * N(-d2))/100
     return rho
 

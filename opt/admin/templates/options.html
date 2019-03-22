@@ -1,4 +1,6 @@
 {% extends "layout.html" %}
+ {% block message %} 
+ {% endblock %}
 {% block content %}
 <style>
 table, td, th {  
@@ -33,13 +35,35 @@ th, td {
                     </div>
                  <div class="form-group">
                     {{ form.ul_price.label(class="form-control-label") }}
-                    {{ form.ul_price(class="form-control form-control-sm") }}
+                    
+                    {% if form.ul_price.errors %}
+                        {{ form.ul_price(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.ul_price.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.ul_price(class="form-control form-control-lg") }}
+                    {% endif %}
+                   
                  
                  </div>
                 
                 <div class="form-group">
                     {{ form.opt_strike.label(class="form-control-label") }}
-                    {{ form.opt_strike(class="form-control form-control-sm") }}
+                           {{ form.opt_strike.label(class="form-control-label") }}
+                    
+                    {% if form.opt_strike.errors %}
+                        {{ form.opt_strike(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.opt_strike.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.opt_strike(class="form-control form-control-lg") }}
+                    {% endif %}
                  
                     </div>
               <div class="form-group">

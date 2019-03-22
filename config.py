@@ -13,7 +13,7 @@ class Config:
 }
 
 
-    
+    POSTS_PER_PAGE= 25
     UPLOAD_FOLDER=  UPLOAD_FOLDER
     SECRET_KEY=os.urandom(24).hex()
     SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\

@@ -5,15 +5,20 @@ from flask_login import LoginManager
 import os
 from flask_mail import Mail
 from config import Config
-
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+#from opt.main.forms import Anonymous
 
 
 
 db = SQLAlchemy()
 bcrypt=Bcrypt()
 login_manager=LoginManager()
+migrate = Migrate()
+#manager = Manager()
 
 login_manager.login_view = 'users.login'
+#login_manager.anonymous_user = Anonymous
 login_manager.login_message_category = 'info'
 mail=Mail()
 
@@ -26,6 +31,9 @@ def create_app(config_class=Config):
     bcrypt.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)
+    migrate.init_app(app, db)
+    
+
 
 
     from opt.users.routes import users

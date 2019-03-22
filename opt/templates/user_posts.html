@@ -1,18 +1,45 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 class="mb-3">Posts by {{ user.username }} ({{ posts.total }})</h1>
+      <table>
+        <tr valign="top">
+   <td> 
+   
+    <h2 class="mb-2">Posts by {{ user.username }} [{{ posts.total }}]</h2>
+  
+   </td>
+   </tr>
+   <tr>
+    <td>
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}">
+    </td>
+   <td>
+    {% if user.last_seen %}
+                <p>Last seen on: {{ user.last_seen.strftime('%d.%m.%Y at %H:%M')}}</p>
+    {% endif %}
+    <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following</p>
+    </td>
+    </tr>
+    </table>
+      {% if user == current_user %}
+        <p><a href="{{ url_for('users.account') }}">Edit your profile</a></p>
+
+         {% elif not user.is_following(user) %}
+        <p><a href="{{ url_for('users.follow', username=user.username) }}">Follow</a></p>
+        {% else %}
+        <p><a href="{{ url_for('users.unfollow', username=user.username) }}">Unfollow</a></p>
+        
+        {% endif %}
+            {% if user != current_user %}
+                <p>
+                    <a href="{{ url_for('main.send_message',
+                                        recipient=user.username) }}">
+                        {{ 'Send private message'}}
+                    </a>
+                </p>
+                {% endif %}
+<hr>
     {% for post in posts.items %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
-              <small class="text-muted">{{ post.date_posted.strftime('%d.%m.%Y at %H:%M') }}</small>
-            </div>
-            <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>
+        {% include '_post.html' %}
     {% endfor %}
     
 {% endblock content %}

@@ -47,34 +47,41 @@ def instrument():
 def opt_calc():
     form=OptionEst()
     if form.validate_on_submit():
-        K=float(request.form.get('opt_strike'))
-        S0=float(request.form.get('ul_price'))
-        t=datetime.strptime(request.form.get('date_val'),'%Y.%m.%d')
-        m=datetime.strptime(request.form.get('exp_date'),'%Y.%m.%d')
-        T=float((m-t).days/365)
-        x=float((m-t).days/365)
-        r=float(request.form.get('rate'))/100
-        sigma=float(request.form.get('vol'))/100
-
-        theo_call = BSM_call_value(S0, K, T, r, sigma)
-        deltac = BSM_delta(S0, K, T, r, sigma)
-        gamma=BSM_gamma(S0, K, T, r, sigma)
-        thetac=BSM_theta(S0, K, T, r, sigma)
-        rhoc=BSM_rho(S0, K, T, r, sigma)
-        vega=BSM_vega(S0, K, T, r, sigma)
-
-        theo_put = BSM_put_value(S0, K, T, r, sigma)
-        deltap=BSM_delta_put(S0, K, T, r, sigma)
-        #BSM_gamma(S0, K, T, r, sigma) #same for call and puts
-        thetap=BSM_theta_put(S0, K, T, r, sigma)
-        rhop=BSM_rho_put(S0, K, T, r, sigma)
-
-        call_values=[theo_call,deltac,gamma,thetac,rhoc,vega]
-        put_values=[theo_put,deltap,gamma,thetap,rhop,vega]
-        #BSM_vega(S0, K, T, r, sigma #same for call and puts
-    
-        return render_template('options.html', call_values=call_values,put_values=put_values,form=form)
+        try:   
+            K=float(request.form.get('opt_strike'))
+            S0=float(request.form.get('ul_price'))
+            t=datetime.strptime(request.form.get('date_val'),'%Y.%m.%d')
+            m=datetime.strptime(request.form.get('exp_date'),'%Y.%m.%d')
+            T=float((m-t).days/365)
+            x=float((m-t).days/365)
+            r=float(request.form.get('rate'))/100
+            sigma=float(request.form.get('vol'))/100
         
+            theo_call = BSM_call_value(S0, K, T, r, sigma)
+            deltac = BSM_delta(S0, K, T, r, sigma)
+            gamma=BSM_gamma(S0, K, T, r, sigma)
+            thetac=BSM_theta(S0, K, T, r, sigma)
+            rhoc=BSM_rho(S0, K, T, r, sigma)
+            vega=BSM_vega(S0, K, T, r, sigma)
+
+            theo_put = BSM_put_value(S0, K, T, r, sigma)
+            deltap=BSM_delta_put(S0, K, T, r, sigma)
+                    #BSM_gamma(S0, K, T, r, sigma) #same for call and puts
+            thetap=BSM_theta_put(S0, K, T, r, sigma)
+            rhop=BSM_rho_put(S0, K, T, r, sigma)
+
+            call_values=[theo_call,deltac,gamma,thetac,rhoc,vega]
+            put_values=[theo_put,deltap,gamma,thetap,rhop,vega]
+                #BSM_vega(S0, K, T, r, sigma #same for call and puts
+            flash(f'The theoretical value and greeks are below', 'success')
+            return render_template('options.html', call_values=call_values,put_values=put_values,form=form)
+                    
+        except Exception as e:
+           # K=float(request.form.get('opt_strike'))
+           # S0=float(request.form.get('ul_price'))
+            flash(f'The expiry date and date of pricing are the same, please change it','danger')
+            flash(f'At expiry, Option Value Call= {S0-K}, Put={K-S0} with Delta: 1','info')
+            return render_template('options.html', title='Options Calculator', form=form)
     return render_template('options.html', title='Options Calculator', form=form)
 
 
@@ -150,3 +157,4 @@ def deletem():
     
     return 'the month has been deleted'
 '''
+

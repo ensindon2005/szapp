@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory
+from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory,g
 from flask_login import login_user, current_user, logout_user, login_required
 from opt import db, bcrypt
 from opt.users.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
@@ -16,8 +16,13 @@ users=Blueprint('users',__name__)
 @users.before_request
 def before_request():
     if current_user.is_authenticated:
+        #g.user = current_user.get_id()
         current_user.last_seen = datetime.utcnow()
+       # g.user = current_user.get_id() # return username in get_id()
         db.session.commit()
+    #else:
+      #  g.user = None
+        
 
 
 
@@ -121,3 +126,39 @@ def reset_token(token):
         flash('Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+
+
+@users.route('/follow/<username>')
+@login_required
+def follow(username):
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash('User {} not found.'.format(username))
+            return redirect(url_for('main.index'))
+        if user == current_user:
+            flash('You cannot follow yourself!')
+            return redirect(url_for('users.account', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash('You are following {}!'.format(username))
+        return redirect(url_for('users.account', username=username))
+    return 'Please log in'
+
+
+
+@users.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('main.index'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+        return redirect(url_for('users.account', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are not following {}.'.format(username))
+    return redirect(url_for('users.account', username=username))
