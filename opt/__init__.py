@@ -7,10 +7,10 @@ from flask_mail import Mail
 from config import Config
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-#from opt.main.forms import Anonymous
+from flask_bootstrap import Bootstrap
 
 
-
+bootstrap = Bootstrap()
 db = SQLAlchemy()
 bcrypt=Bcrypt()
 login_manager=LoginManager()
@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
 
-
+    bootstrap.init_app(app)
     db.init_app(app)
     bcrypt.init_app(app)
     mail.init_app(app)
