@@ -1,18 +1,21 @@
-{% extends "layout.html" %}
 
-{% block content %}
  
-
-       
-          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + message.author.image_file) }}">
-          
-           
-              <a class="mr-2" href="{{ url_for('users.user_posts', username=message.author.username) }}" >{{ message.author.username }}</a>
+<article class="media content-section">
+          <div class="media-body">
+            <div class="article-metadata">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + message.author.image_file) }}">
+              <a class="mr-2" href="{{ url_for('users.user_posts', username=message.author.username) }}">{{ message.author.username }}</a>
               <small class="text-muted">{{ message.timestamp.strftime('%d.%m.%Y at %H:%M') }}</small>
-          
-           
+            </div>
+            
             <p class="article-content">{{ message.body }}</p>
+          </div>
+        </article>
+       
+          
+      
+          
+     
         
  
     
-{% endblock content %}

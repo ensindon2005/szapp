@@ -10,6 +10,7 @@ main=Blueprint('main',__name__)
 
 @main.route('/')
 @main.route('/index',methods=['GET','POST'])
+@login_required
 def index():
     if current_user.is_authenticated:
         page = request.args.get('page', 1, type=int)
