@@ -29,6 +29,7 @@
            
             
     </script>
+  
 {% endblock %}
 
 
@@ -41,13 +42,11 @@
   <!-- Bootstrap 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
    -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
-       {% if title %}
-        <title>HC- {{ title }}</title>
-    {% else %}
+       
         <title>Highway Corp.</title>
-    {% endif %}
+    
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="{{url_for('static',filename='css/boostrap.min.css')}}">
@@ -105,7 +104,8 @@
               {% if current_user.is_authenticated %}
               <li>
                         <a class="nav-item nav-link" href="{{ url_for('main.messages') }}">
-                            {{ 'Messages' }}
+                        <img src="https://img.icons8.com/material-rounded/30/000000/new-post.png">
+                            
                             {% set new_messages = current_user.new_messages() %}
                             <span id="message_count" class="badge"
                                   style="visibility: {% if new_messages %}visible
@@ -114,9 +114,15 @@
                             </span>
                         </a>
                     </li>
-                <a class="nav-item nav-link" href="{{ url_for('users.account') }}">{{ current_user.username.capitalize()}}'s Profile</a>
+                 
+                <a class="nav-item nav-link" href="{{ url_for('users.account') }}">
+                <img src="https://img.icons8.com/material/32/000000/gender-neutral-user.png">
+               
+                </a>
                  <!-- Navbar Right Side <a class="nav-item nav-link" href="{{ url_for('users.account') }}">Account</a>-->
-                <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+                <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">
+                 <img src="https://img.icons8.com/office/30/000000/shutdown.png">
+                </a>
                 
               {% else %}   
                  
@@ -146,6 +152,7 @@
          
          {% endblock %}
         </div>
+
 
 
  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

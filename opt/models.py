@@ -36,10 +36,32 @@ class User(db.Model, UserMixin):
                                         foreign_keys='Message.recipient_id',
                                         backref='recipient', lazy='dynamic')
     last_message_read_time = db.Column(db.DateTime)
+
+    #relationships
     followed = db.relationship('User', secondary=followers,
-                primaryjoin=(followers.c.follower_id == id),
-                secondaryjoin=(followers.c.followed_id == id),
-                backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+                                primaryjoin=(followers.c.follower_id == id),
+                                secondaryjoin=(followers.c.followed_id == id),
+                                backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    liked = db.relationship('PostLike',foreign_keys='PostLike.user_id', 
+                            backref='user', lazy='dynamic')
+
+    #functions
+    def like_post(self, post):
+        if not self.has_liked_post(post):
+            like = PostLike(user_id=self.id, post_id=post.id)
+            db.session.add(like)
+
+    def unlike_post(self, post):
+        if self.has_liked_post(post):
+            PostLike.query.filter_by(
+                user_id=self.id,
+                post_id=post.id).delete()
+
+    def has_liked_post(self, post):
+        return PostLike.query.filter(
+            PostLike.user_id == self.id,
+            PostLike.post_id == post.id).count() > 0
+
 
     def new_messages(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
@@ -118,10 +140,17 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     #foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    likes = db.relationship('PostLike', backref='post', lazy='dynamic')
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
+
+
+class PostLike(db.Model):
+    __tablename__ = 'post_like'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
 #to define the category of underlying/Instrument: underyling or derivative
 class Instrument(db.Model):
@@ -133,6 +162,7 @@ class Instrument(db.Model):
     #relationships
     instname= db.relationship('Stock', backref='inst_fin', lazy=True)
     
+
     def __repr__(self):
         return f"Instrument('{self.name_inst}')"
 

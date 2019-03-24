@@ -18,6 +18,27 @@
       <h2 class="article-title">{{ post.title }}</h2>
       <p class="article-content">{{ post.content }}</p>
     </div>
+   
+    
+
+ <p>
+                  {% if current_user.has_liked_post(post) %}
+    <a  class="btn btn-sm" href="{{ url_for('posts.like_action', post_id=post.id, action='unlike') }}" role="button">
+    <img src="https://img.icons8.com/ultraviolet/30/000000/good-quality.png">
+    </a>
+  {% else %}
+    <a class="btn btn-sm"href="{{ url_for('posts.like_action', post_id=post.id, action='like') }}">
+
+    <img src="https://img.icons8.com/office/30/000000/good-quality.png">
+    </a>
+  {% endif %}
+  {% if post.likes.count() > 0 %}
+      {{ post.likes.count() }}
+       {% else %}
+       0
+      {% endif %}
+      </p>
+
   </article>
   <!-- Modal -->
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">

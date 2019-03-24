@@ -8,6 +8,12 @@ from flask import current_app
 main=Blueprint('main',__name__)
 
 
+'''
+@main.home('/home')
+def home():
+    return render_template('home.html')
+'''
+
 @main.route('/')
 @main.route('/index',methods=['GET','POST'])
 @login_required
