@@ -97,6 +97,9 @@ def user_posts(username):
     return render_template('user_posts.html', posts=posts, user=user)
 
 
+
+
+
 @users.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:

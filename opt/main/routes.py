@@ -5,10 +5,18 @@ from opt.models import *
 from flask_login import login_user, current_user, logout_user, login_required
 from flask import current_app
 
+
+
 main=Blueprint('main',__name__)
 
 
 @main.route('/')
+@main.route('/home')
+def home():
+     return render_template('home.html')
+
+
+#@main.route('/')
 @main.route('/index',methods=['GET','POST'])
 @login_required
 def index():
@@ -58,6 +66,7 @@ def send_message(recipient):
 @main.route('/messages')
 @login_required
 def messages():
+    
     current_user.last_message_read_time = datetime.utcnow()
     current_user.add_notification('unread_message_count', 0)
     db.session.commit()

@@ -1,0 +1,28 @@
+ {% extends 'layout.html' %}
+
+{% block content%}
+ 
+  <!-- Wrapper for slides -->
+ 
+    <div class="item">
+  <img style="width:800px; height: 660px;" src="{{ url_for('static', filename='slider/karl_kohler.jpg')}}" alt="...">
+  <div class="carousel-caption">
+    <h3 style="color:white;" >TRYING one</h3>
+    <p>o no</p>
+  </div>
+</div>
+  
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+   {% endblock content %}
