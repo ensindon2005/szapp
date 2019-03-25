@@ -11,25 +11,25 @@ archives=Blueprint('archives',__name__)
 
 
 @archives.route('/upload', methods= ['GET','POST'])
-@login_required
+#@login_required
 def upload():
   if request.method == 'POST':
     # check if the post request has the file part
         if 'inputfile' not in request.files:
-            #flash('No file part')
+            flash('Please add a file!','danger')
             return redirect(request.url)
         file = request.files['inputfile']
 
          # if user does not select file, browser also
         # submit a empty part without filename
         if file.filename == '':
-            # flash('No selected file')
+            flash('No selected file', 'danger')
             return redirect(request.url)
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'],filename))
-          #flash('success')
+            
             
             return redirect(url_for('archives.uploaded_file',filename=filename))
         

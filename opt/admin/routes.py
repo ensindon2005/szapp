@@ -13,8 +13,8 @@ from opt.admin.greeks import *
 
 admin=Blueprint('admin',__name__,template_folder='templates')
 
-UPLOADS_PATH = join(dirname(realpath(__file__)), './static/uploads/')
-
+#UPLOADS_PATH = join(dirname(realpath(__file__)), './static/uploads/')
+UPLOADS_FOLDER =  './opt/static/uploads/'
 
 #implementing a special requirement
 def special_requirement(f):
@@ -99,11 +99,15 @@ def admin_dash():
 
 
 
-@admin.route('/html_table', methods=("POST", "GET"))
-def html_table():
-    df=pd.read_excel(UPLOADS_PATH+'futures.xlsx')
-    return render_template('view.html', title='excel', tables=[df.to_html(classes='data')], titles=df.columns.values)
+@admin.route('/pandas', methods=("POST", "GET"))
+def pandas():
+    df=pd.read_excel(UPLOADS_FOLDER+'futures.xlsx')
+ 
+    return render_template('pandas.html', title='excel', 
+                        tables=[df.to_html(classes='data', index=False)], titles=df.columns.values)
+ 
 
+    
 
 @admin.route('/future', methods=['GET', 'POST'])
 #@special_requirement

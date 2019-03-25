@@ -15,10 +15,11 @@ db = SQLAlchemy()
 bcrypt=Bcrypt()
 login_manager=LoginManager()
 migrate = Migrate()
+mail = Mail()
 #manager = Manager()
 
 login_manager.login_view = 'users.login'
-#login_manager.anonymous_user = Anonymous
+
 login_manager.login_message_category = 'info'
 mail=Mail()
 
