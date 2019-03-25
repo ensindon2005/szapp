@@ -1,16 +1,12 @@
  {% extends 'layout.html' %}
 
 {% block content%}
-  <p>lorem text</p>
-    {% for post in posts.items %}
+  
 
-      
-     
-    {% endfor %}
+{% for post in posts.items %}
 
-  {% for post in posts.items %}
-
-       {% include '_post.html' %}
+{% include "_post.html" %}
+        
        {% endfor %}
      {% if prev_url %}
     <a href="{{ prev_url }}">Newer posts</a>

@@ -139,11 +139,11 @@ def follow(username):
             return redirect(url_for('main.index'))
         if user == current_user:
             flash('You cannot follow yourself!')
-            return redirect(url_for('users.account', username=username))
+            return redirect(url_for('users.users_posts', username=username))
         current_user.follow(user)
         db.session.commit()
-        flash('You are following {}!'.format(username))
-        return redirect(url_for('users.account', username=username))
+        flash('You are following {}!'.format(username),'info')
+        return redirect(url_for('users.user_posts', username=username))
     return 'Please log in'
 
 
@@ -157,8 +157,8 @@ def unfollow(username):
         return redirect(url_for('main.index'))
     if user == current_user:
         flash('You cannot unfollow yourself!')
-        return redirect(url_for('users.account', username=username))
+        return redirect(url_for('users.user_posts', username=username))
     current_user.unfollow(user)
     db.session.commit()
-    flash('You are not following {}.'.format(username))
-    return redirect(url_for('users.account', username=username))
+    flash('You are not following {}.'.format(username),'danger')
+    return redirect(url_for('users.user_posts', username=username))

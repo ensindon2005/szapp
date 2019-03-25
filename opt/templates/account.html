@@ -11,13 +11,9 @@
           {% if current_user.is_authenticated %}
 
                
-            <p>{{ current_user.followers.count() }} followers, {{ current_user.followed.count() }} following.</p>
+            <p>{{ current_user.followers.count() }} followers, {{ current_user.followed.count() }} following</p>
         
-    
-        <p><a href="{{ url_for('main.send_message',recipient=current_user.username) }}">
-                        {{ ('Send private message') }}
-                    </a>
-                </p>
+
        
         </div>
       </div>

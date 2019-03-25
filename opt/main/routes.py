@@ -10,6 +10,7 @@ main=Blueprint('main',__name__)
 
 @main.route('/')
 @main.route('/index',methods=['GET','POST'])
+@login_required
 def index():
     if current_user.is_authenticated:
         page = request.args.get('page', 1, type=int)
@@ -28,7 +29,7 @@ def explore():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(
         page, 25, False)
-    next_url = url_for('main.xplore', page=posts.next_num) \
+    next_url = url_for('main.explore', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
@@ -49,8 +50,8 @@ def send_message(recipient):
         db.session.commit()
         user.add_notification('unread_message_count', user.new_messages())       
         db.session.commit()
-        flash('Your message has been sent.')
-        return redirect(url_for('main.user', username=recipient))
+        flash('Your message has been sent.','info')
+        return redirect(url_for('main.explore', username=recipient))
     return render_template('send_message.html', title='Send Message',form=form, recipient=recipient)
 
 
@@ -81,3 +82,13 @@ def notifications():
         'data': n.get_data(),
         'timestamp': n.timestamp
     } for n in notifications])
+
+@main.route('/user/<username>/popup')
+@login_required
+def user_popup(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user_popup.html', user=user)
+
+
+
+
