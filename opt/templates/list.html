@@ -1,0 +1,13 @@
+ {% extends 'layout.html' %}
+
+{% block content%}
+
+
+<h2>{{ folder }}</h2>
+ <ul>
+ {% for file in files%}
+ <li><a href="{{url_for('archives.pandas', filename=file)}}">{{file}}</a></li>
+
+{% endfor %}
+
+{% endblock content%}

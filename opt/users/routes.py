@@ -5,13 +5,13 @@ from opt import db, bcrypt
 from opt.users.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
                             RequestResetForm,ResetPasswordForm)
 from opt.users.utils import save_picture,send_reset_email
-from opt.models import User,Post
-
+from opt.models import User,Post,Fold
+import os
 
 
 users=Blueprint('users',__name__)
 
-
+UPLOADS_FOLDER =  './opt/static/uploads/'
 
 @users.before_request
 def before_request():
@@ -37,6 +37,19 @@ def register():
         db.session.add(user)
         db.session.commit()
         
+          #Creating upload folder for user
+        
+        name_folder=form.username.data
+        path=os.path.join(UPLOADS_FOLDER,name_folder)
+        
+        if not os.path.isdir(path):
+            os.mkdir(path)
+        nfold=Fold(owner=user,name_folder=name_folder)
+        
+        db.session.add(nfold)
+        db.session.commit()
+        
+
         flash(f'Your account has been created! You are now able to log in as {form.username.data}', 'success')
         return redirect(url_for('users.login'))
   return render_template('register.html', title='Register', form=form)

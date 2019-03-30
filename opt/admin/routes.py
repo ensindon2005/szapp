@@ -1,7 +1,7 @@
 from functools import wraps
 from flask_login import login_user, current_user, logout_user, login_required
 from opt.admin.forms import NewFuture,NewInstrument,OptionForm,CalcForm, AddMonth,OptionEst
-from opt.models import Futures,Options,Instrument,User,MonthC
+from opt.models import *
 from flask import render_template, url_for, flash, redirect, request, abort,Blueprint, send_from_directory
 import pandas as pd
 from os.path import join, dirname, realpath # to get real path
@@ -12,9 +12,9 @@ from opt.admin.greeks import *
 
 
 admin=Blueprint('admin',__name__,template_folder='templates')
-
-#UPLOADS_PATH = join(dirname(realpath(__file__)), './static/uploads/')
 UPLOADS_FOLDER =  './opt/static/uploads/'
+
+
 
 #implementing a special requirement
 def special_requirement(f):
@@ -96,15 +96,6 @@ def admin_dash():
     return render_template('layoutdash.html', title='Admin Dashboard', 
                     users=users, instruments=instruments, image_file=image_file)
 
-
-
-
-@admin.route('/pandas', methods=("POST", "GET"))
-def pandas():
-    df=pd.read_excel(UPLOADS_FOLDER+'futures.xlsx')
- 
-    return render_template('pandas.html', title='excel', 
-                        tables=[df.to_html(classes='data', index=False)], titles=df.columns.values)
  
 
     
@@ -150,15 +141,17 @@ def add_month():
         return redirect('add_month')
     return render_template('month.html',title='Add Month', form=form)
 
-'''        
-@admin.route("/deletem", methods=['GET','POST'])
 
-def deletem():
-    month = MonthC.query.get_or_404(2)
+#CODE USED TO DELETE DATA in dataset, replace only the entity
 
-    db.session.delete(month)
+@admin.route("/delete", methods=['GET','POST'])
+
+def delete():
+    user = User.query.get_or_404(11)
+
+    db.session.delete(user)
     db.session.commit()
     
-    return 'the month has been deleted'
-'''
+    return 'the file has been deleted'
+
 

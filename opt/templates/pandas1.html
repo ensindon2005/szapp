@@ -25,16 +25,29 @@ th {
 }
 
 </style>
-<table>
-{% for header in headers%}
-<th>
+<div class="container">
+        <h2 class="container">
+            Welcome to Minimal Flask Pandas
+        </h2>
 
-    {{ header }}
-    </th>
-    
-  {% endfor %}
- <tr> <td>
- {{ data }}
-</tr></td>
-</table>
+      
+        <table class="table table-hover table-sm" style="font-size: medium;">
+          <tr>
+          {% for header in headers %}
+            <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+
+        {% for entry in data %}
+
+          <tr>
+             {% for header in headers %}
+           <td>{{ entry [header]}}</td>
+            {% endfor %}
+        {% else %}
+            <td colspan="5">No data found</td>
+          </tr>
+        {% endfor %}
+        </table>
+    </div>
  {% endblock content %}

@@ -26,15 +26,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True)
-    notifications = db.relationship('Notification', backref='user',
-                                    lazy='dynamic')
-    messages_sent = db.relationship('Message',
-                                    foreign_keys='Message.sender_id',
-                                    backref='author', lazy='dynamic')
-    messages_received = db.relationship('Message',
-                                        foreign_keys='Message.recipient_id',
-                                        backref='recipient', lazy='dynamic')
+   
     last_message_read_time = db.Column(db.DateTime)
 
     #relationships
@@ -42,8 +34,24 @@ class User(db.Model, UserMixin):
                                 primaryjoin=(followers.c.follower_id == id),
                                 secondaryjoin=(followers.c.followed_id == id),
                                 backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+   
     liked = db.relationship('PostLike',foreign_keys='PostLike.user_id', 
                             backref='user', lazy='dynamic')
+
+    posts = db.relationship('Post', backref='author', lazy=True)
+
+    notifications = db.relationship('Notification', backref='user',
+                                    lazy='dynamic')
+
+    messages_sent = db.relationship('Message',
+                                    foreign_keys='Message.sender_id',
+                                    backref='author', lazy='dynamic')
+
+    messages_received = db.relationship('Message',
+                                        foreign_keys='Message.recipient_id',
+                                        backref='recipient', lazy='dynamic')
+
+    folder=db.relationship('Fold',backref='owner',lazy=True)
 
     #functions
     def like_post(self, post):
@@ -111,6 +119,14 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
+
+class Fold(db.Model):
+    id= db.Column(db.Integer, primary_key=True)
+    name_folder=db.Column(db.String(40),unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -151,6 +167,9 @@ class PostLike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+
+
+
 
 #to define the category of underlying/Instrument: underyling or derivative
 class Instrument(db.Model):
