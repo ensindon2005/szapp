@@ -3,11 +3,27 @@
 {% block content%}
 
 
-<h2>{{ folder }}</h2>
- <ul>
+<h2>{{ folder }}'s Files List</h2>
+ <table class="table table-hover table-sm" style="font-size: medium;">
+ <tr>
+ <th> File Name</th>
+ <th> Extension </th>
+ <th> Explore</th>
+ <th> Format </th>
+ <th> Download </th>
+ </tr>
  {% for file in files%}
- <li><a href="{{url_for('archives.pandas', filename=file)}}">{{file}}</a></li>
+    
+ <tr>
+ <td>{{ file.split('.')[0] }}</td>
+ <td>{{ file.split('.')[1] }}</td>
+ <td><a href="{{url_for('archives.pandas', filename=file)}}">{{file.split('.')[0]}}</a></td>
+ <td><a href="{{url_for('archives.format_file', filename=file)}}">{{file.split('.')[0]}}</a></td>
+ <td><a href="{{url_for('archives.download', filename=file)}}"><button class='btn btn-default' text='download'>Download</button></a></td>
+ 
+ </tr>
 
+ 
 {% endfor %}
-
+ </table>
 {% endblock content%}

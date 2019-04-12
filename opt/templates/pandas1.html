@@ -12,7 +12,8 @@ table.dataframe, .dataframe th, .dataframe td {
   border: 2px;
   border-bottom: 1px solid #C8C8C8;
   border-collapse: collapse;
-  text-align:left;
+  text-align:right;
+  align: right;
   padding: 10px;
   margin-bottom: 40px;
   font-size: 0.9em;
@@ -24,6 +25,8 @@ th {
     color: white;
 }
 
+
+
 </style>
 <div class="container">
         <h2 class="container">
@@ -32,12 +35,15 @@ th {
 
       
         <table class="table table-hover table-sm" style="font-size: medium;">
+        
           <tr>
+         
           {% for header in headers %}
-            <th>{{ header }}</th>
+            <th>{{ header }} </th>
             {% endfor %}
-          </tr>
 
+          </tr>
+       
         {% for entry in data %}
 
           <tr>
@@ -50,4 +56,25 @@ th {
         {% endfor %}
         </table>
     </div>
+  <div>
+  <ul>
+        {% for tipo in dtypes %}
+         <li>
+         <select>
+         <option value={{ dtypes[0]}}>{{ tipo }}</option>
+        <option value='string' selected = {{tipo }}>{{ tipo }}</option>
+         </select>
+          </li>
+
+        {% endfor %}
+       </ul>
+
+ 
+ 
+  {% for key,value in df.iterrows() %}
+      <option value="{{ value['fruit'] }}">{{ value['Lots'] }}</option>
+
+    {% endfor %}
+</div>
  {% endblock content %}
+
