@@ -1,0 +1,56 @@
+ {% extends 'layout.html' %}
+
+{% block content%}
+
+<div class='container'>
+    <h2 class="container">
+Check format data from file: {{filename.split('.')[0]}}
+<br>
+</h2>
+</div>
+ <table class="table table-hover table-sm" style="font-size: medium;">        
+          <tr>
+          <th>Column Name</th>
+          <th>Data Type</th>
+          <tr>
+          {% for header in headers %}
+          <tr>  
+          <td>{{ header }} </td>
+          {% if df[header].dtype == 'object' %}
+          <td> string </td>
+          {% elif df[header].dtype == 'int64'%}
+          <td> integer </td>
+            {% elif df[header].dtype == 'float'%}
+          <td> float </td>
+            {% else %}
+          <td> datetime </td>
+
+          {% endif %}
+          </tr>
+          {% endfor %}
+           
+          </table>
+
+          </div>
+<table class="table table-hover table-sm" style="font-size: medium;">        
+          <tr>
+          <th>Column Name</th>
+          <th>Data Type</th>
+          <tr>
+          {% for header in headers %}
+          <tr>  
+          <td>{{ header }} </td>
+          
+          <td> <select name="datatype" size=1>
+                    {% for tipo in dtypes %}
+                    <option value={{ tipo }}>{{ tipo }}</option>
+                    {% endfor %}</td>
+          
+          </tr>
+          {% endfor %}
+           
+          </table>
+
+          </div>
+
+{% endblock content%}

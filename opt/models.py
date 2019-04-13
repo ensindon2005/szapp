@@ -51,7 +51,7 @@ class User(db.Model, UserMixin):
                                         foreign_keys='Message.recipient_id',
                                         backref='recipient', lazy='dynamic')
 
-    folder=db.relationship('Fold',backref='owner',lazy=True)
+    FileContent=db.relationship('FileContent',backref='owner',lazy=True)
 
     #functions
     def like_post(self, post):
@@ -120,14 +120,20 @@ class User(db.Model, UserMixin):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
 
-class Fold(db.Model):
+class FileContent(db.Model):
+    __tablename__='filecontent'
     id= db.Column(db.Integer, primary_key=True)
-    name_folder=db.Column(db.String(40),unique=True, nullable=False)
+    filename=db.Column(db.String(400), nullable=False)
+    path_file=db.Column(db.String(500),unique=True, nullable=False)
+    date_upload= db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    down_date=db.Column(db.DateTime, nullable=True)
+    extension=db.Column(db.String(5), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 
 class Message(db.Model):
+    __tablename__='message'
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -138,6 +144,7 @@ class Message(db.Model):
         return '<Message {}>'.format(self.body)
 
 class Notification(db.Model):
+    __tablename__='notification'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

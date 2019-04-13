@@ -5,7 +5,7 @@ from opt import db, bcrypt
 from opt.users.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
                             RequestResetForm,ResetPasswordForm)
 from opt.users.utils import save_picture,send_reset_email
-from opt.models import User,Post,Fold
+from opt.models import User,Post
 import os
 
 

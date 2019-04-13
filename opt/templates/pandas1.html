@@ -30,7 +30,9 @@ th {
 </style>
 <div class="container">
         <h2 class="container">
-            Welcome to Minimal Flask Pandas
+            Data View for: {{filename.split('.')[0]}}
+            <br>
+            <br>
         </h2>
 
       
@@ -56,25 +58,8 @@ th {
         {% endfor %}
         </table>
     </div>
-  <div>
-  <ul>
-        {% for tipo in dtypes %}
-         <li>
-         <select>
-         <option value={{ dtypes[0]}}>{{ tipo }}</option>
-        <option value='string' selected = {{tipo }}>{{ tipo }}</option>
-         </select>
-          </li>
-
-        {% endfor %}
-       </ul>
-
  
  
-  {% for key,value in df.iterrows() %}
-      <option value="{{ value['fruit'] }}">{{ value['Lots'] }}</option>
 
-    {% endfor %}
-</div>
  {% endblock content %}
 
