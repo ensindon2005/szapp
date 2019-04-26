@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+   
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     password = db.Column(db.String(60), nullable=False)
@@ -51,7 +52,11 @@ class User(db.Model, UserMixin):
                                         foreign_keys='Message.recipient_id',
                                         backref='recipient', lazy='dynamic')
 
-    FileContent=db.relationship('FileContent',backref='owner',lazy=True)
+    files_saved=db.relationship('FileContent',backref='owner',lazy=True)
+
+
+
+    company_id = db.Column(db.Integer, db.ForeignKey('business.id'))
 
     #functions
     def like_post(self, post):
@@ -128,9 +133,24 @@ class FileContent(db.Model):
     date_upload= db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     down_date=db.Column(db.DateTime, nullable=True)
     extension=db.Column(db.String(5), nullable=False)
+    data=db.Column(db.LargeBinary)
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
+#This is the company/business name of the users.
+class Business(db.Model):
+    __tablename__='business'
+    id= db.Column(db.Integer, primary_key=True)
+    bizname=db.Column(db.String(400), nullable=False)
+    folder_path=db.Column(db.String(400), nullable=False)
+
+
+    accounts=db.relationship('User',backref='company',lazy=True)
+
+    def __repr__(self):
+        return f"Business('{self.bussname}')"
+    
 
 class Message(db.Model):
     __tablename__='message'

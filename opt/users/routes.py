@@ -5,8 +5,9 @@ from opt import db, bcrypt
 from opt.users.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
                             RequestResetForm,ResetPasswordForm)
 from opt.users.utils import save_picture,send_reset_email
-from opt.models import User,Post
+from opt.models import User,Post,FileContent,Business
 import os
+from werkzeug import secure_filename
 
 
 users=Blueprint('users',__name__)
@@ -33,21 +34,20 @@ def register():
   form = RegistrationForm()
   if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(username=form.username.data.lower(),company=form.company.data, email=form.email.data.lower(), password=hashed_password)
+       
         db.session.add(user)
         db.session.commit()
         
           #Creating upload folder for user
         
-        name_folder=form.username.data
+        name_folder=form.company.data
         path=os.path.join(UPLOADS_FOLDER,name_folder)
-        
         if not os.path.isdir(path):
             os.mkdir(path)
-        nfold=Fold(owner=user,name_folder=name_folder)
-        
-        db.session.add(nfold)
-        db.session.commit()
+            business=Business(bizname=form.company.data,folder_path=path)
+            db.session.add(business)
+            db.session.commit()
         
 
         flash(f'Your account has been created! You are now able to log in as {form.username.data}', 'success')
@@ -75,19 +75,41 @@ def login():
 @login_required
 def account():
     form = UpdateAccountForm()
+    business=current_user.company
+    if current_user.company==None:
+        path=os.path.join(UPLOADS_FOLDER,current_user.username.lower())
+    else:
+        path= os.path.join(UPLOADS_FOLDER,current_user.company.lower())
+    if not os.path.isdir(path):
+            os.mkdir(path)
+    
+
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
             current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
-
+        current_user.company = form.company.data
+        
         db.session.commit()
+       
+        npath=os.path.join(UPLOADS_FOLDER,form.company.data.lower())
+        if os.path.isdir(path) != os.path.isdir(npath):
+            os.rename(path,npath)
+            files = current_user.files_saved
+            for i in range(len(files)):
+                file=current_user.files_saved[i]
+                filename = file.filename
+                file.path_file=os.path.join(npath,filename)
+                db.session.commit()
+
         flash('Your account has been updated!', 'success')
         return redirect(url_for('users.account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.company.data=current_user.company
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)

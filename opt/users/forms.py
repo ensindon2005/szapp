@@ -11,6 +11,8 @@ class RegistrationForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
+    company = StringField('Company',
+                           validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
@@ -41,21 +43,28 @@ class UpdateAccountForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
+    company = StringField('Company',
+                        validators=[DataRequired(), Length(min=2, max=20)])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
-        if username.data != current_user.username:
-            user = User.query.filter_by(username=username.data).first()
+        if username.data.lower() != current_user.username.lower():
+            user = User.query.filter_by(username=username.data.lower()).first()
             if user:
                 raise ValidationError('That username is taken. Please choose a different one.')
 
     def validate_email(self, email):
-        if email.data != current_user.email:
-            user = User.query.filter_by(email=email.data).first()
+        if email.data.lower() != current_user.email.lower():
+            user = User.query.filter_by(email=email.data.lower()).first()
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
+    def validate_company(self, company):
+        if company.data.lower() != current_user.company.lower():
+            users = User.query.filter_by(company=company.data.lower()).count()
+            if users:
+                raise ValidationError('That company has the max number of users')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email',

@@ -12,6 +12,7 @@ from flask_bootstrap import Bootstrap
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
+#db.create_all(app=create_app())
 bcrypt=Bcrypt()
 login_manager=LoginManager()
 migrate = Migrate()
@@ -28,7 +29,8 @@ def create_app(config_class=Config):
     app.config.from_object(Config)
 
     bootstrap.init_app(app)
-    db.init_app(app)
+   # with app.app_context():
+        #db.init_app(app)
     bcrypt.init_app(app)
     mail.init_app(app)
     login_manager.init_app(app)

@@ -8,47 +8,46 @@ Check format data from file: {{filename.split('.')[0]}}
 <br>
 </h2>
 </div>
- <table class="table table-hover table-sm" style="font-size: medium;">        
+
+<table class="table table-hover table-sm" style="font-size: medium;">        
           <tr>
           <th>Column Name</th>
           <th>Data Type</th>
+          <th>Change Data Type</th>
           <tr>
           {% for header in headers %}
           <tr>  
           <td>{{ header }} </td>
           {% if df[header].dtype == 'object' %}
+          
           <td> string </td>
+         
           {% elif df[header].dtype == 'int64'%}
           <td> integer </td>
             {% elif df[header].dtype == 'float'%}
           <td> float </td>
             {% else %}
           <td> datetime </td>
-
           {% endif %}
-          </tr>
-          {% endfor %}
-           
-          </table>
+          <td>
 
-          </div>
-<table class="table table-hover table-sm" style="font-size: medium;">        
-          <tr>
-          <th>Column Name</th>
-          <th>Data Type</th>
-          <tr>
-          {% for header in headers %}
-          <tr>  
-          <td>{{ header }} </td>
+
+          <select>
+          <option value=''>------</option>
           
-          <td> <select name="datatype" size=1>
-                    {% for tipo in dtypes %}
-                    <option value={{ tipo }}>{{ tipo }}</option>
-                    {% endfor %}</td>
+          {% for tipo in after %}
           
-          </tr>
-          {% endfor %}
+          
+            <option value={{ after }} >{{ tipo }}</option>
+        {% endfor %}
+      
+          </select>
            
+        </td>
+     
+            
+            {% endfor %}
+            </tr> 
           </table>
 
           </div>

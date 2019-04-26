@@ -48,6 +48,19 @@
                         {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                        <div class="form-group">
+                    {{ form.company.label(class="form-control-label") }}
+                    {% if form.company.errors %}
+                        {{ form.company(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.company.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.company(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
                 <div class="form-group">
                     {{ form.picture.label() }}
                     {{ form.picture(class="form-control-file") }}
