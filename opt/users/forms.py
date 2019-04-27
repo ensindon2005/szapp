@@ -43,8 +43,8 @@ class UpdateAccountForm(FlaskForm):
                            validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
-    company = StringField('Company',
-                        validators=[DataRequired(), Length(min=2, max=20)])
+    #company = StringField('Company',
+       #                 validators=[DataRequired(), Length(min=2, max=20)])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
@@ -60,11 +60,11 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-    def validate_company(self, company):
-        if company.data.lower() != current_user.company.lower():
-            users = User.query.filter_by(company=company.data.lower()).count()
-            if users:
-                raise ValidationError('That company has the max number of users')
+  #  def validate_company(self, company):
+   #     if company.data.lower() != current_user.company.lower():
+    #        users = User.query.filter_by(company=company.data.lower()).count()
+     #       if users:
+      #          raise ValidationError('That company has the max number of users')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email',

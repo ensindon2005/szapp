@@ -26,19 +26,20 @@ encodes = ["utf8", "cp1252"]
 @archives.route('/list', methods=['GET','POST'])
 @login_required
 def list_files():
-  folder=current_user.company
+  folder=current_user.company.folder_path
   listfiles=[]
-  files=os.listdir(current_app.config['UPLOAD_FOLDER']+folder)
+  #files=os.listdir(current_app.config['UPLOAD_FOLDER']+folder)
+  files=os.listdir(folder)
   for file in files:
          if allowed_file(file):
                 listfiles.append(file)
-  return render_template('list.html',folder=folder, files=listfiles)
+  return render_template('list.html',folder=current_user.company.bizname, files=listfiles)
 
 @archives.route('/download/<filename>')
 @login_required
 def download(filename):
         # no best solution but it is working
-        fbase= os.path.join('./static/uploads/',current_user.company,filename)
+        fbase= os.path.join(current_user.company.folder_path,filename)
         #ruta=os.path.abspath(filename)
         #file=os.path.join(path,filename)
         #file=os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.username,filename)
@@ -60,6 +61,7 @@ def reading(filename):
 @login_required
 def delete(filename):
     file= FileContent.query.filter_by(filename=filename).first()
+    os.remove(file.path_file)
     db.session.delete(file)
     db.session.commit()
     os.remove(file.path_file)
@@ -70,7 +72,7 @@ def delete(filename):
 @archives.route('/explore/<filename>')
 @login_required
 def explore(filename):
-    path_file=os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.company,filename)
+    path_file=os.path.join(current_user.company.folder_path,filename)
     extension=filename.split('.')[-1]
     if extension in excel:
        df=pd.read_excel(path_file,index_col=False)
@@ -101,7 +103,7 @@ def explore(filename):
 @archives.route('/pandas/<filename>', methods=['GET','POST'])
 @login_required
 def pandas(filename):
-    path_file=os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.company,filename)
+    path_file=os.path.join(current_user.company.folder_path,filename)
     extension=filename.split('.')[-1]
     if extension in excel:
        df=pd.read_excel(path_file,index_col=False)
@@ -130,7 +132,7 @@ def pandas(filename):
 @login_required
 def upload():
   if request.method == 'POST':
-        folder=current_user.company
+        folder=current_user.company.folder_path
     # check if the post request has the file part
         if 'inputfile' not in request.files:
             flash('Please add a file!','danger')
@@ -146,7 +148,7 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             
-            path_file=os.path.join(current_app.config['UPLOAD_FOLDER'],folder,filename)
+            path_file=os.path.join(folder,filename)
             file.save(path_file)
             new_file=FileContent(filename=filename,path_file=path_file,extension=extension(filename),
                                  data=file.read(), user_id=current_user.id)

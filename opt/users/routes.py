@@ -33,14 +33,7 @@ def register():
         return redirect(url_for('main.index'))
   form = RegistrationForm()
   if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data.lower(),company=form.company.data, email=form.email.data.lower(), password=hashed_password)
-       
-        db.session.add(user)
-        db.session.commit()
-        
-          #Creating upload folder for user
-        
+      #Creating upload folder for user
         name_folder=form.company.data
         path=os.path.join(UPLOADS_FOLDER,name_folder)
         if not os.path.isdir(path):
@@ -48,6 +41,13 @@ def register():
             business=Business(bizname=form.company.data,folder_path=path)
             db.session.add(business)
             db.session.commit()
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data.lower(), company=business,
+                    email=form.email.data.lower(), password=hashed_password)
+        
+        db.session.add(user)
+        db.session.commit()
+        
         
 
         flash(f'Your account has been created! You are now able to log in as {form.username.data}', 'success')
@@ -79,7 +79,8 @@ def account():
     if current_user.company==None:
         path=os.path.join(UPLOADS_FOLDER,current_user.username.lower())
     else:
-        path= os.path.join(UPLOADS_FOLDER,current_user.company.lower())
+         path=current_user.company.folder_path
+       # path= os.path.join(UPLOADS_FOLDER,current_user.company.lower())
     if not os.path.isdir(path):
             os.mkdir(path)
     
@@ -90,29 +91,30 @@ def account():
             current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
-        current_user.company = form.company.data
+
+       # current_user.company = form.company.data
         
         db.session.commit()
        
-        npath=os.path.join(UPLOADS_FOLDER,form.company.data.lower())
-        if os.path.isdir(path) != os.path.isdir(npath):
-            os.rename(path,npath)
-            files = current_user.files_saved
-            for i in range(len(files)):
-                file=current_user.files_saved[i]
-                filename = file.filename
-                file.path_file=os.path.join(npath,filename)
-                db.session.commit()
+       # npath=os.path.join(UPLOADS_FOLDER,form.company.data.lower())
+       # if os.path.isdir(path) != os.path.isdir(npath):
+        #    os.rename(path,npath)
+         #   files = current_user.files_saved
+          #  for i in range(len(files)):
+           #     file=current_user.files_saved[i]
+            #    filename = file.filename
+             #   file.path_file=os.path.join(npath,filename)
+              #  db.session.commit()
 
         flash('Your account has been updated!', 'success')
         return redirect(url_for('users.account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-        form.company.data=current_user.company
+        company=current_user.company.bizname
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
+                           image_file=image_file, form=form,company=company)
 
 
 @users.route("/logout")
@@ -130,8 +132,6 @@ def user_posts(username):
         .order_by(Post.date_posted.desc())\
         .paginate(page=page,per_page=1000)
     return render_template('user_posts.html', posts=posts, user=user)
-
-
 
 
 
