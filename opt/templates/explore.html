@@ -4,20 +4,29 @@
 
 <div class='container'>
     <h2 class="container">
-Check format data from file: {{filename.split('.')[0]}}
+Check format data for File: {{filename.split('.')[0]}}
 <br>
 </h2>
 </div>
-
+ <form method="POST" action="{{ url_for('archives.datatype', filename=filename) }}">
+  
+            
+{{ form.submit(class="btn btn-outline-info") }}
+<br>
+<br>
 <table class="table table-hover table-sm" style="font-size: medium;">        
           <tr>
           <th>Column Name</th>
+          <th>Data Example</th>
           <th>Data Type</th>
           <th>Change Data Type</th>
+          
           <tr>
           {% for header in headers %}
           <tr>  
+          
           <td>{{ header }} </td>
+          <td> {{df[header][0]}}</td>
           {% if df[header].dtype == 'object' %}
           
           <td> string </td>
@@ -29,27 +38,40 @@ Check format data from file: {{filename.split('.')[0]}}
             {% else %}
           <td> datetime </td>
           {% endif %}
-          <td>
-
-
-          <select>
-          <option value=''>------</option>
           
-          {% for tipo in after %}
-          
-          
-            <option value={{ after }} >{{ tipo }}</option>
-        {% endfor %}
-      
-          </select>
+            <td>
            
-        </td>
-     
+              
+              {{ form.datatype(class="form-control form-control-sm") }}
             
-            {% endfor %}
+              </td>
+                        
+           
             </tr> 
-          </table>
+            {% endfor %}
+            
+  </table>  
 
-          </div>
-
+  
+            
+      </form>   
+    
+      <!-- 
+       <div>
+         <form class="form-inline" method="POST" action="{{ url_for('archives.datatype', filename=filename) }}">
+           <div class="form-group">
+            <div class="input-group">
+          <select name="comp_select" class="selectpicker form-control">
+          <option value=''>------</option>
+          {% for tipo in safter %}
+          
+          
+            <option value={{ safter }} >{{ tipo}}</option>
+        {% endfor %}
+          <button type="submit" class="btn btn-outline-info">change</button>
+            
+             </select>
+              </form>
+           </div>
+           -->
 {% endblock content%}

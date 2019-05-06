@@ -75,7 +75,7 @@ def login():
 @login_required
 def account():
     form = UpdateAccountForm()
-    business=current_user.company
+    #business=current_user.company
     if current_user.company==None:
         path=os.path.join(UPLOADS_FOLDER,current_user.username.lower())
     else:

@@ -11,5 +11,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-def extension(filename):
-    return filename.split('.')[1]
+
+
+

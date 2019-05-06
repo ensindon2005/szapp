@@ -30,9 +30,10 @@ th {
 </style>
 <div class="container">
         <h2 class="container">
-            Data View for: {{filename.split('.')[0]}}
+            Data View first 5 rows of {{filename.split('.')[0]}}
             <br>
             <br>
+            
         </h2>
 
       
@@ -50,7 +51,7 @@ th {
 
           <tr>
              {% for header in headers %}
-           <td>{{ entry [header]}}</td>
+           <td>{{ entry[header]}}</td>
             {% endfor %}
         {% else %}
             <td colspan="5">No data found</td>
@@ -58,7 +59,12 @@ th {
         {% endfor %}
         </table>
     </div>
- 
+ <div>
+{% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+{% endfor %}
+ </div>
  
 
  {% endblock content %}

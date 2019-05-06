@@ -1,0 +1,54 @@
+ {% extends 'layout.html' %}
+
+{% block content%}
+
+<div class='container'>
+    <h2 class="container">
+Please indicate which columns can be used for the caculations
+<br>
+</h2>
+</div>
+ <form method="POST" action="{{ url_for('archives.finalized',filename=filename) }}">
+
+{{ form.submit(class="btn btn-outline-info") }}
+<br>
+<br>
+  <table class="table table-hover table-sm" style="font-size: medium;">        
+          <tr>
+          <th>Column Name</th>
+          <th>Data Example</th>
+          <th>Data Type</th>
+          <th>Select as</th>
+          <th>headers</th>
+          <tr>
+          {% for header in headers %}
+          <tr>  
+          
+          <td>{{ header }} </td>
+          <td> {{df[header][0]}}</td>
+          {% if df[header].dtype == 'object' %}
+          
+          <td> string </td>
+         
+          {% elif df[header].dtype == 'int64'%}
+          <td> integer </td>
+            {% elif df[header].dtype == 'float'%}
+          <td> float </td>
+            {% else %}
+          <td> datetime </td>
+          {% endif %}
+          <td> </td>
+            <td>
+           
+              {{ form.relevant(class="form-control form-control-sm") }}
+            
+              </td>
+                        
+
+            </tr> 
+            {% endfor %}
+  </table>       
+      </form>   
+      
+      
+{% endblock content%}

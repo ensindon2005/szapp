@@ -3,31 +3,42 @@
 {% block content%}
 
 
-<h2>{{ folder }}'s Files List</h2>
+<h2>{{ current_user.username.capitalize() }}'s Files List</h2>
 <br>
+<p> To proceed with the different calculation, you need to:
+           <p> 1.- Check the format of your data --> Option Data Format
+           <p> 2.- Indicate which columns are relevant for the calculations --> Option Select
  <table class="table table-hover table-sm" style="font-size: medium;">
  <tr>
  <th> File Name</th>
  <th> Extension </th>
- <th> Explore Data</th>
- <th> Format Data </th>
+ <th> Uploaded</th>
+ <th> Data Overview</th>
+ <th> Data Format </th>
+ <th> Select Cols </th>
  <th> Download </th>
  <th> Delete </th>
+ <th>Read DB</th>
  </tr>
- {% for file in files%}
+ {% for file in files %}
     
  <tr>
  <td>{{ file.split('.')[0] }}</td>
  <td>{{ file.split('.')[1] }}</td>
+ <td>{{  uploads[0]}}</td>
  <td><a href="{{url_for('archives.pandas', filename=file)}}">{{file.split('.')[0]}}</a></td>
  <td><a href="{{url_for('archives.explore', filename=file)}}">{{file.split('.')[0]}}</a></td>
- <td><a href="{{url_for('archives.download', filename=file)}}"><button class='btn btn-default' text='download'>Download</button></a></td>
- <td><a href="{{url_for('archives.delete', filename=file)}}"><button class='btn btn-default' text='delete'>Delete</button></a></td>
-  <td><a href="{{url_for('archives.reading', filename=file)}}"><button class='btn btn-default' text='reading'>Reading</button></a></td>
+  <td><a href="{{url_for('archives.relevant', filename=file)}}"><button class='btn btn-outline-info' text='download'>Select</button></a></td>
+ <td><a href="{{url_for('archives.download', filename=file)}}"><button class='btn btn-outline-info' text='download'>Download</button></a></td>
+ <td><a href="{{url_for('archives.delete', filename=file)}}"><button class='btn btn-outline-info' text='delete'>Delete</button></a></td>
+  <td><a href="{{url_for('archives.reading', filename=file)}}"><button class='btn btn-outline-info' text='reading'>Reading</button></a></td>
 
  </tr>
 
  
 {% endfor %}
  </table>
+ 
+
+   
 {% endblock content%}
